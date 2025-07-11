@@ -1,4 +1,4 @@
-package keyboard_builder
+package keyboardbuilder
 
 import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -28,6 +28,7 @@ func (b *Keyboard) AddRow(texts ...string) KeyboardBuilder {
 	return b
 }
 
+// Build constructs and returns a ReplyKeyboardMarkup object using the rows defined in the Keyboard struct.
 func (b *Keyboard) Build() tgbotapi.ReplyKeyboardMarkup {
 	return tgbotapi.ReplyKeyboardMarkup{
 		Keyboard:       b.rows,

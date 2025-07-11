@@ -2,6 +2,7 @@ package bot
 
 import tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 
+// Command represents an executable action or operation within the system, typically triggered by user input or program logic.
 type Command struct{}
 
 func (b *Bot) handleCommand(msg *tgbotapi.Message) error {
@@ -11,10 +12,9 @@ func (b *Bot) handleCommand(msg *tgbotapi.Message) error {
 		if err != nil {
 			return err
 		}
-		break
 	case "help":
 		b.OnHelp(msg)
-		break
+
 	}
 	return nil
 }
