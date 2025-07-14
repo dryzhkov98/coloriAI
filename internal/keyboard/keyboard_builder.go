@@ -13,10 +13,6 @@ type KeyboardBuilder interface {
 	Build() tgbotapi.ReplyKeyboardMarkup
 }
 
-func NewReplyBuilder() KeyboardBuilder {
-	return &Keyboard{}
-}
-
 func (b *Keyboard) AddRow(texts ...string) KeyboardBuilder {
 	var row []tgbotapi.KeyboardButton
 
