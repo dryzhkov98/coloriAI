@@ -13,10 +13,6 @@ type KeyboardBuilder interface {
 	Build() tgbotapi.ReplyKeyboardMarkup
 }
 
-func NewReplyBuilder() KeyboardBuilder {
-	return &Keyboard{}
-}
-
 func (b *Keyboard) AddRow(texts ...string) KeyboardBuilder {
 	var row []tgbotapi.KeyboardButton
 
@@ -27,8 +23,6 @@ func (b *Keyboard) AddRow(texts ...string) KeyboardBuilder {
 	b.rows = append(b.rows, row)
 	return b
 }
-
-// Build constructs and returns a ReplyKeyboardMarkup object using the rows defined in the Keyboard struct.
 func (b *Keyboard) Build() tgbotapi.ReplyKeyboardMarkup {
 	return tgbotapi.ReplyKeyboardMarkup{
 		Keyboard:       b.rows,
