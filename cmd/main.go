@@ -1,10 +1,10 @@
 package main
 
 import (
-	"coloriAI/internal/adapters/postgres"
-	"coloriAI/internal/adapters/telegram"
 	"coloriAI/internal/config"
 	"coloriAI/pkg/logger"
+	"coloriAI/pkg/postgres"
+	"coloriAI/pkg/telegram"
 	"context"
 	"time"
 )
@@ -21,7 +21,7 @@ func main() {
 
 	appLogger := logger.Get()
 
-	db, err := postgres.NewPool(ctx, cfg.DBConfig, appLogger)
+	db, err := postgres.NewDatabase(ctx, cfg.DBConfig, appLogger)
 	if err != nil {
 		panic(err.Error())
 	}

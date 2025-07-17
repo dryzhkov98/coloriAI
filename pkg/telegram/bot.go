@@ -1,7 +1,6 @@
 package telegram
 
 import (
-	zapbotlogger "coloriAI/internal/adapters/zap"
 	"coloriAI/internal/config"
 	"coloriAI/pkg/logger"
 	"context"
@@ -35,7 +34,7 @@ func NewBot(cfg config.BotConfig) (*Bot, error) {
 func (b *Bot) Start() error {
 	appLogger := logger.Get()
 
-	err := tgbotapi.SetLogger(&zapbotlogger.ZapLoggerAdapter{})
+	err := tgbotapi.SetLogger(&logger.ZapLoggerAdapter{})
 	if err != nil {
 		appLogger.Error("Failed to set logger", zap.Error(err))
 		return err
