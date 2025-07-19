@@ -5,28 +5,13 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"os"
-	"sync"
 )
 
-var (
-	cfg            *config.Config
-	loggerInstance *zap.Logger
-	once           sync.Once
-)
+func New(cfg *config.Config) *zap.Logger {
+	logger := newLogger(cfg)
+	zap.ReplaceGlobals(logger)
 
-func New(config *config.Config) {
-	once.Do(func() {
-		cfg = config
-		loggerInstance = newLogger(cfg)
-		zap.ReplaceGlobals(loggerInstance)
-	})
-}
-
-func Get() *zap.Logger {
-	if loggerInstance == nil {
-		New(cfg)
-	}
-	return loggerInstance
+	return logger
 }
 
 func newLogger(config *config.Config) *zap.Logger {

@@ -1,12 +1,21 @@
 package logger
 
-// перенести в pkg
-type ZapLoggerAdapter struct{}
+import "go.uber.org/zap"
+
+type ZapLoggerAdapter struct {
+	sugar *zap.SugaredLogger
+}
+
+func NewAdapter(logger *zap.Logger) *ZapLoggerAdapter {
+	return &ZapLoggerAdapter{
+		sugar: logger.Sugar(),
+	}
+}
 
 func (z *ZapLoggerAdapter) Println(v ...interface{}) {
-	Get().Sugar().Info(v...)
+	z.sugar.Info(v...)
 }
 
 func (z *ZapLoggerAdapter) Printf(format string, v ...interface{}) {
-	Get().Sugar().Infof(format, v...)
+	z.sugar.Infof(format, v...)
 }

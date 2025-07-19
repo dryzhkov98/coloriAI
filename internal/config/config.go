@@ -1,6 +1,7 @@
 package config
 
 import (
+	"coloriAI/internal/utils/dictionary"
 	"github.com/ilyakaznacheev/cleanenv"
 	"log"
 	"os"
@@ -26,6 +27,7 @@ type (
 		BotName          string `env:"BOT_NAME"`
 		DebugMode        bool   `env:"DEBUG_MODE"`
 		UpdateBotTimeout int    `env:"UPDATE_BOT_TIMEOUT" default:"60"`
+		Dictionary       *dictionary.Dictionary
 	}
 
 	DbConfig struct {
@@ -48,5 +50,21 @@ func New() (*Config, error) {
 		return nil, err
 	}
 
+	err = conf.loadDictionary()
+	if err != nil {
+		return nil, err
+	}
+
 	return conf, nil
+}
+
+func (cfg *Config) loadDictionary() error {
+	d, err := dictionary.MustLoad("ru")
+	if err != nil {
+		return err
+	}
+
+	cfg.BotConfig.Dictionary = d
+
+	return nil
 }

@@ -1,0 +1,32 @@
+bot:
+  start_command:
+    command: "/start"
+    message: |
+      👋 Привет! Я — ColoriAI, твой AI-дневник питания.\n\n
+      Отправь мне фото еды или опиши блюдо — я распознаю его и посчитаю КБЖУ 📊\n\n
+      Используй кнопки ниже для начала 👇\n
+
+  buttons:
+    main_menu:
+      send_food_photo:
+        text:  "📸 Отправить еду\n"
+        callback_action: "send_food"
+      food_journal:
+        text: "📝 Мой журнал\n"
+        callback_action: "get_food_journal"
+      statistics:
+        text: "📊 Статистика\n"
+        callback_action: "get_statistics"
+      help:
+        text: "❓Помощь"
+        callback_action: null
+
+  help_command:
+    trigger: /help
+    response: |
+      🤖 Что я умею:\n\n
+      • 📸 Распознаю еду по фото и описанию\n\n
+      • 🧠 Считаю КБЖУ с помощью AI\n\n
+      • 📝 Веду твой журнал питания\n\n
+      • 📊 Показываю статистику по дням и неделям\n\n
+      Просто пришли мне фото или напиши, что ты ел — я всё обработаю 💪\n\n

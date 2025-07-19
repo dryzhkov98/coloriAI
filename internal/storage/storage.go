@@ -2,6 +2,8 @@ package storage
 
 import (
 	"coloriAI/internal/entities/user"
+	storage "coloriAI/internal/storage/repositories/postgres"
+	"coloriAI/pkg/postgres"
 	"context"
 )
 
@@ -20,4 +22,12 @@ type FoodJournalRepository interface {
 }
 
 type Repository struct {
+	UserRepository        UserRepository
+	FoodJournalRepository FoodJournalRepository
+}
+
+func NewRepository(db *postgres.Database) *Repository {
+	return &Repository{
+		UserRepository: storage.NewUserRepository(db),
+	}
 }

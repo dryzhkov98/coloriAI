@@ -9,50 +9,46 @@ import (
 )
 
 type Bot struct {
-	api           tgbotapi.BotAPI
+	Api           tgbotapi.BotAPI
+	Logger        *zap.Logger
 	isDebug       bool
 	updateTimeout int
 	ctx           context.Context
 }
 
-func NewBot(cfg config.BotConfig) (*Bot, error) {
+func NewBot(cfg config.BotConfig, logger *zap.Logger) (*Bot, error) {
 
-	bot, err := tgbotapi.NewBotAPI(cfg.BotToken)
+	botApi, err := tgbotapi.NewBotAPI(cfg.BotToken)
 	if err != nil {
 		return nil, err
 	}
 
-	bot.Debug = cfg.DebugMode
+	botApi.Debug = cfg.DebugMode
 
 	return &Bot{
-		api:           *bot,
+		Api:           *botApi,
 		isDebug:       cfg.DebugMode,
 		updateTimeout: cfg.UpdateBotTimeout,
+		Logger:        logger.Named(cfg.BotName),
 	}, nil
 }
 
-func (b *Bot) Start() error {
-	appLogger := logger.Get()
+func (b *Bot) SetLogger() error {
+	loggerAdapter := logger.NewAdapter(b.Logger)
 
-	err := tgbotapi.SetLogger(&logger.ZapLoggerAdapter{})
+	err := tgbotapi.SetLogger(loggerAdapter)
 	if err != nil {
-		appLogger.Error("Failed to set logger", zap.Error(err))
+		b.Logger.Error("Failed to set logger", zap.Error(err))
 		return err
 	}
+
+	return nil
+}
+
+func (b *Bot) GetUpdateConfig() tgbotapi.UpdateConfig {
 	updateConfig := tgbotapi.NewUpdate(0)
 
 	updateConfig.Timeout = b.updateTimeout
 
-	updates := b.api.GetUpdatesChan(updateConfig)
-
-	for update := range updates {
-		if update.Message != nil {
-			_, err := b.api.Send(tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text))
-			if err != nil {
-				panic(err)
-			}
-		}
-	}
-
-	return nil
+	return updateConfig
 }
