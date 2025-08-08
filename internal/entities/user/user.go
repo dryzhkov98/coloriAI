@@ -1,9 +1,11 @@
 package user
 
+import "time"
+
 type User struct {
-	ID         string
-	TelegramID int64
-	Name       string
-	CreatedAt  string
-	UpdatedAt  string
+	ID         string    `db:"id"`
+	TelegramID int64     `db:"telegram_id"`
+	Username   string    `db:"username"`
+	CreatedAt  time.Time `db:"created_at"`
+	UpdatedAt  time.Time `db:"updated_at"`
 }

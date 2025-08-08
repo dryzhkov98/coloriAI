@@ -13,7 +13,7 @@ type UserRepository interface {
 	CreateUser(ctx context.Context, user user.User) (error, string)
 	GetUser(ctx context.Context, id int) (user.User, error)
 	GetUserByID(ctx context.Context, id string) (user.User, error)
-	GetUserByTelegramID(ctx context.Context, id int) (user.User, error)
+	GetUserByTelegramID(ctx context.Context, id int64) (user.User, error)
 	GetUsers(ctx context.Context) ([]user.User, error)
 }
 

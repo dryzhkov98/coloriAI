@@ -40,6 +40,7 @@ func NewApp(cfg *config.Config) *App {
 
 	app.createRepositories()
 	app.createServices()
+	app.createHandlers()
 
 	return app
 
@@ -83,6 +84,7 @@ func (a *App) startBot() {
 
 	for update := range updates {
 		if update.Message.IsCommand() {
+			a.handlers.Command(a.ctx, a.bot, update)
 		}
 	}
 
@@ -98,7 +100,7 @@ func (a *App) createRepositories() {
 func (a *App) createServices() {
 	a.logger.Info("Creating services")
 
-	service := services.NewService()
+	service := services.NewService(a.repositories, a.logger)
 
 	a.services = service
 }

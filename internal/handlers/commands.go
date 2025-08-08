@@ -7,7 +7,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func (h *Handlers) Command(ctx context.Context, bot telegram.Bot, update tgbotapi.Update) {
+func (h *Handlers) Command(ctx context.Context, bot *telegram.Bot, update tgbotapi.Update) {
 	switch update.Message.Command() {
 	case "start":
 		err := h.StartHandler.HandleCommand(ctx, bot, update)

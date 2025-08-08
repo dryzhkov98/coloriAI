@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"coloriAI/internal/entities/user"
 	"coloriAI/internal/services"
 	"coloriAI/pkg/telegram"
 	"context"
@@ -17,6 +18,25 @@ func NewStartHandler(userService services.UserService) *StartHandler {
 	}
 }
 
-func (h *StartHandler) HandleCommand(ctx context.Context, bot telegram.Bot, update tgbotapi.Update) error {
-	panic("implement me")
+func (h *StartHandler) HandleCommand(ctx context.Context, bot *telegram.Bot, update tgbotapi.Update) error {
+	logger := bot.Logger
+	logger.Info("Start command")
+
+	existing, err := h.userService.FindUserByTelegramID(ctx, update.Message.From.ID)
+	if err != nil {
+		return err
+	}
+
+	if existing != (user.User{}) {
+		logger.Info("User already exists")
+		return nil
+	}
+
+	err, _ = h.userService.CreateUser(ctx, update.Message.From)
+
+	if err != nil {
+		return err
+	}
+	return nil
+
 }
