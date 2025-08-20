@@ -4,6 +4,7 @@ import (
 	"coloriAI/internal/entities/user"
 	"coloriAI/pkg/postgres"
 	"context"
+	"errors"
 	"fmt"
 	"github.com/jackc/pgx/v5"
 )
@@ -15,7 +16,7 @@ type UserRepository struct {
 }
 
 func (r *UserRepository) CreateUser(ctx context.Context, user user.User) (error, string) {
-	row := r.db.Pool.QueryRow(ctx, "INSERT INTO users (username, telegram_id) VALUES ($1, $2)", user.Username, user.TelegramID)
+	row := r.db.Pool.QueryRow(ctx, "INSERT INTO users (username, telegram_id) VALUES ($1, $2) RETURNING id", user.Username, user.TelegramID)
 
 	var userId string
 
@@ -37,19 +38,21 @@ func (r *UserRepository) GetUserByID(ctx context.Context, id string) (user.User,
 	panic("implement me")
 }
 
-func (r *UserRepository) GetUserByTelegramID(ctx context.Context, id int64) (user.User, error) {
-	row := r.db.Pool.QueryRow(ctx, "SELECT * FROM users WHERE telegram_id = $1", id)
-
+func (r *UserRepository) GetUserByTelegramID(ctx context.Context, tgID int64) (user.User, error) {
 	var u user.User
-	err := row.Scan(&u.ID, &u.TelegramID, &u.Username, &u.CreatedAt, &u.UpdatedAt)
+
+	err := r.db.Pool.QueryRow(ctx,
+		`SELECT id, username, telegram_id, created_at, updated_at
+		   FROM users
+		  WHERE telegram_id = $1`,
+		tgID,
+	).Scan(&u.ID, &u.Username, &u.TelegramID, &u.CreatedAt, &u.UpdatedAt)
 
 	if err != nil {
-		if err == pgx.ErrNoRows {
-			fmt.Printf("No u found with telegram_id %d\n", id)
-			return u, nil // Возвращаем пустого пользователя, потому что данных нет
-		} else {
-			return u, fmt.Errorf("failed to scan u: %v", err)
+		if errors.Is(err, pgx.ErrNoRows) {
+			return user.User{}, pgx.ErrNoRows
 		}
+		return user.User{}, fmt.Errorf("get user by telegram_id=%d: %w", tgID, err)
 	}
 
 	return u, nil

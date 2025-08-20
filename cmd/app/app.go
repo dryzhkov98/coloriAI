@@ -2,7 +2,6 @@ package app
 
 import (
 	"coloriAI/internal/config"
-	"coloriAI/internal/handlers"
 	"coloriAI/internal/services"
 	"coloriAI/internal/storage"
 	"coloriAI/pkg/logger"
@@ -19,7 +18,6 @@ type App struct {
 	db           *postgres.Database
 	repositories *storage.Repository
 	services     *services.Service
-	handlers     *handlers.Handlers
 	ctx          context.Context
 	logger       *zap.Logger
 }
@@ -40,8 +38,6 @@ func NewApp(cfg *config.Config) *App {
 
 	app.createRepositories()
 	app.createServices()
-	app.createHandlers()
-
 	return app
 
 }
@@ -83,8 +79,16 @@ func (a *App) startBot() {
 	updates := a.bot.Api.GetUpdatesChan(updateConfig)
 
 	for update := range updates {
+		if update.CallbackQuery != nil {
+			continue
+		}
+
+		if update.Message == nil {
+			continue
+		}
+
 		if update.Message.IsCommand() {
-			a.handlers.Command(a.ctx, a.bot, update)
+			continue
 		}
 	}
 
@@ -103,11 +107,4 @@ func (a *App) createServices() {
 	service := services.NewService(a.repositories, a.logger)
 
 	a.services = service
-}
-func (a *App) createHandlers() {
-	a.logger.Info("Creating handlers")
-
-	handler := handlers.NewHandler(a.services.UserService)
-
-	a.handlers = handler
 }

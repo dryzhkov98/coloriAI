@@ -2,6 +2,7 @@ package telegram
 
 import (
 	"coloriAI/internal/config"
+	"coloriAI/internal/utils/dictionary"
 	"coloriAI/pkg/logger"
 	"context"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -13,6 +14,7 @@ type Bot struct {
 	Logger        *zap.Logger
 	isDebug       bool
 	updateTimeout int
+	Dict          *dictionary.Dictionary
 	ctx           context.Context
 }
 
@@ -28,6 +30,7 @@ func NewBot(cfg config.BotConfig, logger *zap.Logger) (*Bot, error) {
 	return &Bot{
 		Api:           *botApi,
 		isDebug:       cfg.DebugMode,
+		Dict:          cfg.Dictionary,
 		updateTimeout: cfg.UpdateBotTimeout,
 		Logger:        logger.Named(cfg.BotName),
 	}, nil
